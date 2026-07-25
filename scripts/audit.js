@@ -68,6 +68,21 @@ const PRIORITY_STRINGS = [
   ['Configured Hooks', 'Hooks → 已配置钩子'],
   ['Open user config', 'Hooks → 打开用户配置'],
   [' are moving to Customize', 'Hooks/MCP → Customize 迁移'],
+  // v1.2.0 截图补全
+  ['browser:"Browser & Network"', 'Settings → Browser & Network'],
+  ['"git-prs":"Git & PRs"', 'Settings → Git & PRs'],
+  ['Adjust Plan', 'Plan → 调整套餐'],
+  ['Allowlist Options', 'Agents → 白名单选项'],
+  ['Enable LSPs', 'Agents → 启用 LSP'],
+  ['Terminal and Editing', 'Agents → 终端与编辑'],
+  ['Max Worktrees', 'Worktree → Max Worktrees'],
+  ['Cursor-Managed Worktrees', 'Worktree → Managed'],
+  ['Explore Subagent Model', 'Models → Explore Subagent'],
+  ['Task Models', 'Models → Task Models'],
+  ['Branch Prefix', 'Git → 分支前缀'],
+  ['Ignore Files', 'Indexing → 忽略文件'],
+  ['Include Third-Party Plugins, Skills, and Other Configs', 'Rules → 第三方配置'],
+  ['Usage limits reset on <!> (<!>)', 'Plan → 用量重置模板'],
 ];
 
 function auditFile(label, filePath) {

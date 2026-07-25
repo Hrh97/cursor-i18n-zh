@@ -25,26 +25,7 @@ const TARGET_FILES = [
 
 const PRODUCT_REL = 'product.json';
 
-function detectCursorPath() {
-  const candidates =
-    PLATFORM === 'win32'
-      ? [
-          path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local'), 'Programs', 'cursor', 'resources', 'app'),
-          path.join(process.env.ProgramFiles || 'C:\\Program Files', 'cursor', 'resources', 'app'),
-        ]
-      : PLATFORM === 'darwin'
-        ? [
-            '/Applications/Cursor.app/Contents/Resources/app',
-            path.join(os.homedir(), 'Applications', 'Cursor.app', 'Contents', 'Resources', 'app'),
-          ]
-        : [
-            '/opt/Cursor/resources/app',
-            path.join(os.homedir(), '.local/share/cursor/resources/app'),
-          ];
-
-  const appPath = candidates.find((p) => fs.existsSync(p));
-  if (!appPath) return null;
-
+function buildCursorPaths(appPath) {
   const appBundlePath =
     PLATFORM === 'darwin' && appPath.includes('/Contents/Resources/app')
       ? appPath.split('/Contents/Resources/app')[0]
@@ -59,6 +40,55 @@ function detectCursorPath() {
       abs: path.join(appPath, t.rel),
     })),
   };
+}
+
+function resolveAppPath(input) {
+  if (!input) return null;
+
+  const normalized = path.resolve(input);
+  const candidates = [normalized];
+
+  if (PLATFORM === 'win32') {
+    candidates.push(path.join(normalized, 'resources', 'app'));
+    candidates.push(path.join(normalized, 'cursor', 'resources', 'app'));
+  } else if (PLATFORM === 'darwin') {
+    candidates.push(path.join(normalized, 'Contents', 'Resources', 'app'));
+  } else {
+    candidates.push(path.join(normalized, 'resources', 'app'));
+  }
+
+  return candidates.find((p) => fs.existsSync(path.join(p, PRODUCT_REL))) || null;
+}
+
+function detectCursorPath(customPath) {
+  if (customPath) {
+    const appPath = resolveAppPath(customPath);
+    return appPath ? buildCursorPaths(appPath) : null;
+  }
+
+  const appPath = getDefaultCursorCandidates().find((p) => fs.existsSync(p));
+  if (!appPath) return null;
+
+  return buildCursorPaths(appPath);
+}
+
+function getDefaultCursorCandidates() {
+  if (PLATFORM === 'win32') {
+    return [
+      path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local'), 'Programs', 'cursor', 'resources', 'app'),
+      path.join(process.env.ProgramFiles || 'C:\\Program Files', 'cursor', 'resources', 'app'),
+    ];
+  }
+  if (PLATFORM === 'darwin') {
+    return [
+      '/Applications/Cursor.app/Contents/Resources/app',
+      path.join(os.homedir(), 'Applications', 'Cursor.app', 'Contents', 'Resources/app'),
+    ];
+  }
+  return [
+    '/opt/Cursor/resources/app',
+    path.join(os.homedir(), '.local/share/cursor/resources/app'),
+  ];
 }
 
 function readCursorVersion(appPath) {
@@ -159,6 +189,8 @@ module.exports = {
   PLATFORM,
   TARGET_FILES,
   detectCursorPath,
+  resolveAppPath,
+  getDefaultCursorCandidates,
   readCursorVersion,
   isCursorRunning,
   hasWritePermission,

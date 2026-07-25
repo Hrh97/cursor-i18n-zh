@@ -6,6 +6,7 @@ const { ensureBackup, restoreFromBackup, hasBackup, getBackupDir } = require('./
 const { fixProductHashes } = require('./src/hash');
 const {
   detectCursorPath,
+  getDefaultCursorCandidates,
   readCursorVersion,
   isCursorRunning,
   needsElevation,
@@ -19,7 +20,12 @@ const {
 const { translateFile, fixMacGatekeeper } = require('./src/translate');
 const { configureLocale } = require('./src/locale');
 
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
+let customInstallPath = null;
+
+function getPaths() {
+  return requireCursorPaths(customInstallPath);
+}
 
 function printHelp() {
   console.log(`
@@ -32,6 +38,9 @@ Cursor 界面汉化工具 v${VERSION}
   node index.js locale     仅配置 VS Code 中文语言包
   node index.js help       显示帮助
 
+选项:
+  -p, --path <目录>        手动指定 Cursor 安装路径（Windows 常用）
+
 说明:
   - 汉化前请先完全退出 Cursor（Cmd+Q）
   - 若权限不足，工具会弹出 macOS 授权对话框
@@ -40,10 +49,34 @@ Cursor 界面汉化工具 v${VERSION}
 `);
 }
 
-function requireCursorPaths() {
-  const paths = detectCursorPath();
+function parseCustomPath(args) {
+  const pathFlagIndex = args.findIndex((a) => a === '-p' || a === '--path');
+  if (pathFlagIndex === -1) return null;
+  const value = args[pathFlagIndex + 1];
+  if (!value || value.startsWith('-')) {
+    console.error('❌ 请在使用 -p / --path 后提供 Cursor 安装目录。');
+    console.error('   示例: node index.js localize -p "D:\\software\\cursor"');
+    process.exit(1);
+  }
+  return value;
+}
+
+function requireCursorPaths(customPath) {
+  const paths = detectCursorPath(customPath);
   if (!paths) {
     console.error('❌ 未找到 Cursor 安装目录，请确认 Cursor 已安装。');
+    if (customPath) {
+      console.error(`   已指定路径: ${customPath}`);
+      console.error('   请确认该目录下存在 resources\\app\\product.json');
+      console.error('   或直接指定到 resources\\app 目录。');
+    } else if (PLATFORM === 'win32') {
+      console.error('\n   Windows 默认查找位置:');
+      for (const p of getDefaultCursorCandidates()) {
+        console.error(`   - ${p}`);
+      }
+      console.error('\n   若 Cursor 安装在其他盘，请使用:');
+      console.error('   node index.js localize -p "D:\\你的路径\\cursor"');
+    }
     process.exit(1);
   }
   return paths;
@@ -58,7 +91,7 @@ function ensureNotRunning() {
 }
 
 function cmdStatus() {
-  const paths = requireCursorPaths();
+  const paths = getPaths();
   const version = readCursorVersion(paths.appPath);
   const state = readState();
 
@@ -112,7 +145,7 @@ function cmdLocale() {
 function cmdLocalize() {
   ensureNotRunning();
 
-  const paths = requireCursorPaths();
+  const paths = getPaths();
   const version = readCursorVersion(paths.appPath);
   const writableFiles = [paths.productJsonPath, ...paths.targets.map((t) => t.abs)];
 
@@ -193,7 +226,7 @@ function cmdLocalize() {
 function cmdRestore() {
   ensureNotRunning();
 
-  const paths = requireCursorPaths();
+  const paths = getPaths();
   const version = readCursorVersion(paths.appPath);
   const writableFiles = [paths.productJsonPath, ...paths.targets.map((t) => t.abs)];
 
@@ -222,8 +255,9 @@ function cmdRestore() {
 
 async function main() {
   const args = process.argv.slice(2);
+  customInstallPath = parseCustomPath(args);
   const actionFlag = args.find((a) => a.startsWith('--action='));
-  const command = actionFlag ? actionFlag.split('=')[1] : args[0] || 'help';
+  const command = actionFlag ? actionFlag.split('=')[1] : args.find((a) => !a.startsWith('-') && a !== customInstallPath && a !== '-p' && a !== '--path') || 'help';
 
   if (command === 'help' || command === '-h' || command === '--help') {
     printHelp();
@@ -241,7 +275,7 @@ async function main() {
   }
 
   if (command === 'localize' || command === 'restore') {
-    const paths = requireCursorPaths();
+    const paths = getPaths();
 
     if (needsElevation(paths) && !isRoot() && !actionFlag) {
       console.log('🔐 需要管理员权限以修改 Cursor 安装目录...\n');

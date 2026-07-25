@@ -23,8 +23,8 @@ function applyTrickyReplacements(content) {
     },
     {
       regex:
-        /Use\s+with\s+caution\.\s*Skip\s+symlinks\s+during\s+\.cursorignore\s+file\s+discovery\.[\s\S]{0,200}?Changing\s+this\s+setting\s+will\s+require\s+a\s+restart\s+of\s+Cursor\./gi,
-      zh: '请谨慎使用。在查找 .cursorignore 文件时跳过符号链接。仅当代码库包含大量符号链接且均可直接访问时才启用。更改此设置需重启 Cursor。',
+        /Use\s+with\s+caution\.\s*Skip\s+symlinks\s+during\s+\.cursorignore\s+file\s+discovery\.[\s\S]{0,220}?Changing\s+this\s+setting\s+(?:will\s+require\s+a\s+restart\s+of|requires\s+restarting)\s+Cursor\./gi,
+      zh: '请谨慎使用。在查找 .cursorignore 文件时跳过符号链接。仅当所有 .cursorignore 均可不经符号链接直接访问时才启用。更改此设置需重启 Cursor。',
     },
     {
       regex: /Submit\s+with\s+(\$\{[^}]+\}|Ctrl\s*\+\s*)Enter/gi,
@@ -37,7 +37,7 @@ function applyTrickyReplacements(content) {
     },
     {
       regex:
-        /Apply\s+(.{0,10}?)\.cursorignore(.{0,10}?)\s+files\s+to\s+all\s+subdirectories[\s\S]{0,80}?restart\s+of\s+Cursor\./gi,
+        /Apply\s+(.{0,10}?)\.cursorignore(.{0,10}?)\s+files\s+to\s+all\s+subdirectories[\s\S]{0,120}?Changing\s+this\s+setting\s+(?:will\s+require\s+a\s+restart\s+of|requires\s+restarting)\s+Cursor\./gi,
       zh: '将 $1.cursorignore$2 文件应用于所有子目录。更改此设置需重启 Cursor。',
     },
     {
@@ -164,6 +164,27 @@ function applyTrickyReplacements(content) {
     { regex: /permissions\.json\)`:"Run Mode"/g, zh: 'permissions.json)`:"运行模式"' },
     { regex: /`Run Mode \(enforced by/g, zh: '`运行模式（由' },
     { regex: /Connecting to \$\{il\}\. Remote Control will be ready once its agent worker registers\./g, zh: '正在连接到 ${il}。远程控制将在其智能体工作进程注册后就绪。' },
+    // ── v1.2.0：套餐用量 / 规则列表 / 分支 等模板 ──
+    { regex: /Usage limits reset on <!> \(<!>\)/g, zh: '用量额度将于 <!> 重置（<!>)' },
+    { regex: /> day<!> left/g, zh: '> 天剩余<!>' },
+    { regex: /ae\(tt,\(\)=>l\(\)!==1\?"s":"",lt\)/g, zh: 'ae(tt,()=>"",lt)' },
+    { regex: />% used<\/span>/g, zh: '>已使用</span>' },
+    { regex: /% used · /g, zh: '% 已使用 · ' },
+    { regex: /% used`/g, zh: '% 已使用`' },
+    { regex: /% used \\xB7 /g, zh: '% 已使用 · ' },
+    { regex: /Show all \(<!> more\)/g, zh: '显示全部（另有 <!> 个）' },
+    { regex: />Show less</g, zh: '>收起<' },
+    { regex: /title:"Git & PRs"/g, zh: 'title:"Git 与拉取请求"' },
+    { regex: /title:"Branches"/g, zh: 'title:"分支"' },
+    { regex: /label:"Branches"/g, zh: 'label:"分支"' },
+    { regex: /"aria-label":"Branches"/g, zh: '"aria-label":"分支"' },
+    { regex: /p=l===void 0\?"Branches":l/g, zh: 'p=l===void 0?"分支":l' },
+    { regex: /_\|\|"Branches"/g, zh: '_||"分支"' },
+    { regex: />View All Models</g, zh: '>查看全部模型<' },
+    { regex: />API Keys</g, zh: '>API 密钥<' },
+    { regex: /Your plan includes at least \$/g, zh: '你的套餐至少包含 $' },
+    { regex: / of API usage\./g, zh: ' 的 API 用量。' },
+    { regex: /\(controlled by admin\)/g, zh: '（由管理员控制）' },
   ];
 
   let result = content;
