@@ -83,6 +83,19 @@ const PRIORITY_STRINGS = [
   ['Ignore Files', 'Indexing → 忽略文件'],
   ['Include Third-Party Plugins, Skills, and Other Configs', 'Rules → 第三方配置'],
   ['Usage limits reset on <!> (<!>)', 'Plan → 用量重置模板'],
+  // v1.3.0 Cursor 3.17 截图补全
+  ['Code Intelligence', 'Settings → 代码智能'],
+  ['Window Restoration', 'General → 窗口还原'],
+  ['Continue Interrupted Agents', 'General → 继续中断的智能体'],
+  ['Choose Custom Sound...', 'General → 自定义提示音'],
+  ['Profile Image', 'Account → 头像'],
+  ['Follow System High Contrast', 'Appearance → 高对比度'],
+  ['Give the Agent a Confetti Cannon', 'Appearance → 彩带炮'],
+  ['Default Environment', 'Agents → 默认环境'],
+  ['Voice Submit Keywords', 'Agents → 语音关键词'],
+  ['Choose which models appear in the model picker', 'Models → 模型选择器'],
+  ['Open Local Links in Cursor Browser', 'Browser → 本地链接'],
+  ['"Usage limits reset on "', 'Plan → 用量重置前缀'],
 ];
 
 function auditFile(label, filePath) {

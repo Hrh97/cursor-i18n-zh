@@ -262,6 +262,117 @@ const settingsPagesDict = {
     '将 .cursorignore 文件应用于所有子目录。更改此设置需重启 Cursor。',
   'Use with caution. Skip symlinks during .cursorignore file discovery. Enable only when all .cursorignore files are reachable without symlinks. Changing this setting requires restarting Cursor.':
     '请谨慎使用。在查找 .cursorignore 文件时跳过符号链接。仅当所有 .cursorignore 均可不经符号链接直接访问时才启用。更改此设置需重启 Cursor。',
+
+  // ── ⑫ Cursor 3.17+ 截图补全（通用 / 账号 / 外观 / 智能体 / 模型 / 浏览器）──
+  'Code Intelligence': '代码智能',
+  'Plugins, MCPs, Skills, and Rules have moved to Customize':
+    '插件、MCP、技能与规则已迁移至 Customize',
+  "We've introduced a new home for all the ways to customize Cursor.":
+    '我们为所有自定义方式提供了新的统一入口。',
+  'Continue here': '继续留在此处',
+  Startup: '启动',
+  'Window Restoration': '窗口还原',
+  'Controls which windows Cursor restores on startup':
+    '控制 Cursor 启动时还原哪些窗口',
+  'Continue Interrupted Agents': '继续中断的智能体',
+  'Automatically resume working on agents and their subagents after a reload or restart':
+    '在重新加载或重启后，自动继续处理智能体及其子智能体',
+  'Show rotating tips on the empty screen': '在空白界面显示轮播提示',
+  'Completion Sound': '完成提示音',
+  'Play a sound when agents finish or need attention':
+    '智能体完成或需要关注时播放提示音',
+  'Play a sound when Agent finishes responding': '智能体完成回复时播放提示音',
+  'Choose Custom Sound...': '选择自定义提示音...',
+  'Default Sound': '默认提示音',
+  'Reset to default sound': '重置为默认提示音',
+  Preview: '预览',
+
+  Email: '邮箱',
+  'Profile Image': '头像',
+  'Upload image': '上传图片',
+  'Change image': '更换图片',
+  'Remove image': '移除图片',
+  'PNG, JPEG, or WebP file.': '支持 PNG、JPEG 或 WebP 文件。',
+  'PNG, JPEG, or WebP up to': '支持 PNG、JPEG 或 WebP，最大',
+  'First Name': '名',
+  'Last Name': '姓',
+  Handle: '用户名',
+  Links: '链接',
+  'Add link': '添加链接',
+  'Account email shown on the profile page': '资料页显示的账号邮箱',
+  'Upload or remove the profile photo': '上传或移除头像',
+  'Name shown on the public profile page': '公开资料页显示的姓名',
+  'Claim a handle for your public profile page': '为公开资料页认领用户名',
+  'When enabled, your cursor.com profile page is visible to anyone with the link.':
+    '启用后，任何拥有链接的人都可以查看你的 cursor.com 资料页。',
+  'When enabled, your cursor.com profile page is visible to anyone with the link':
+    '启用后，任何拥有链接的人都可以查看你的 cursor.com 资料页',
+  'Public profiles are disabled by your team admin.':
+    '公开资料已被团队管理员禁用。',
+  'Public profiles are disabled by your team admin':
+    '公开资料已被团队管理员禁用',
+
+  'Agent Conversations': '智能体对话',
+  'Wrap long lines in Agent conversation code blocks':
+    '在智能体对话代码块中自动换行长行',
+  'Follow System High Contrast': '跟随系统高对比度',
+  'Switch to a high contrast theme when your OS is in a high contrast mode':
+    '当操作系统处于高对比度模式时，切换到高对比度主题',
+  Fun: '趣味',
+  'Give the Agent a Confetti Cannon': '给智能体彩带炮',
+  'Allow the agent to celebrate with a shower of confetti':
+    '允许智能体用彩带庆祝',
+  'Partially mask your email address in the Cursor user interface':
+    '在 Cursor 界面中部分隐藏你的邮箱地址',
+
+  ' of Other Models usage.': ' 的其他模型用量。',
+  ' of Other Models usage': ' 的其他模型用量',
+
+  Conversation: '对话',
+  'Default Environment': '默认环境',
+  'Where new agents start by default': '新智能体默认启动的位置',
+  'Last Used': '最近使用',
+  'New Worktree': '新建工作树',
+  'Default Model': '默认模型',
+  'What model new agents use by default': '新智能体默认使用的模型',
+  'Cursor Default': 'Cursor 默认',
+  'New Messages': '新消息',
+  'Choose the default behavior of messages sent while Agent is working':
+    '选择智能体工作时发送消息的默认行为',
+  'Manually Sent Messages from Queue': '从队列手动发送的消息',
+  'Choose the default behavior of messages sent from the queue':
+    '选择从队列发送消息的默认行为',
+  'Send Immediately': '立即发送',
+  Interrupt: '中断',
+  Queue: '排队',
+  'Voice Submit Keywords': '语音提交关键词',
+  'Custom words that submit a voice prompt. Spaces and punctuation are ignored.':
+    '用于提交语音提示的自定义词。空格与标点会被忽略。',
+  'Third-Party Imports': '第三方导入',
+  'Import Claude Code Conversations': '导入 Claude Code 对话',
+  'Import Claude.ai Conversations': '导入 Claude.ai 对话',
+  'Sync chats and continue them in Cursor': '同步聊天并在 Cursor 中继续',
+  'Keep This Computer Awake': '保持电脑唤醒',
+  'Allow agents on this machine to be controlled remotely from mobile and web':
+    '允许从移动端和网页远程控制本机上的智能体',
+  'Context and Tools': '上下文与工具',
+  'Execution and Approvals': '执行与审批',
+
+  'Choose which models appear in the model picker':
+    '选择哪些模型显示在模型选择器中',
+  'Choose a model or use the cost- and availability-aware default':
+    '选择模型，或使用兼顾成本与可用性的默认选项',
+
+  'Open Local Links in Cursor Browser': '在 Cursor 浏览器中打开本地链接',
+  'Open Web Links in Cursor Browser': '在 Cursor 浏览器中打开网页链接',
+  'Required Domains': '必需的域名',
+  'Copy Domains': '复制域名',
+  Copied: '已复制',
+  'Run Diagnostic': '运行诊断',
+  'Running Diagnostic': '正在运行诊断',
+  'HTTP Compatibility Mode': 'HTTP 兼容模式',
+  'HTTP/2 is recommended for low-latency streaming. In some corporate proxy and VPN environments, the compatibility mode may need to be lowered.':
+    '推荐使用 HTTP/2 以获得低延迟流式传输。在部分企业代理或 VPN 环境中，可能需要降低兼容模式。',
 };
 
 module.exports = { settingsPagesDict };

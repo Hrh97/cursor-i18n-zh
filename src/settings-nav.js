@@ -20,8 +20,9 @@ const SETTINGS_NAV_REPLACEMENTS = [
   ['developer:"Developer"', 'developer:"开发者"'],
   ['docs:"Docs"', 'docs:"官方文档"'],
   ['contact:"Contact"', 'contact:"联系我们"'],
+  ['indexing:"Indexing & Docs"', 'indexing:"索引与文档"'],
+  ['indexing:"Code Intelligence"', 'indexing:"代码智能"'],
 ];
-
 function applySettingsNav(content) {
   let result = content;
   for (const [from, to] of SETTINGS_NAV_REPLACEMENTS) {
