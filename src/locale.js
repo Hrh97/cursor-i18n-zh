@@ -3,13 +3,25 @@ const path = require('path');
 const os = require('os');
 const { execSync } = require('child_process');
 
-const CURSOR_USER_DIR = path.join(
-  os.homedir(),
-  'Library',
-  'Application Support',
-  'Cursor',
-  'User'
-);
+// Cursor 的用户数据目录随平台不同：
+//   macOS   ~/Library/Application Support/Cursor/User
+//   Windows %APPDATA%\Cursor\User
+//   Linux   $XDG_CONFIG_HOME/Cursor/User（默认 ~/.config）
+// 旧版本把 macOS 路径写死，导致 Windows 上写到了
+// C:\Users\<用户>\Library\Application Support\Cursor\User 这个无效目录。
+function resolveCursorUserDir() {
+  if (process.platform === 'darwin') {
+    return path.join(os.homedir(), 'Library', 'Application Support', 'Cursor', 'User');
+  }
+  if (process.platform === 'win32') {
+    const appData = process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
+    return path.join(appData, 'Cursor', 'User');
+  }
+  const configHome = process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config');
+  return path.join(configHome, 'Cursor', 'User');
+}
+
+const CURSOR_USER_DIR = resolveCursorUserDir();
 
 const LOCALE_PATH = path.join(CURSOR_USER_DIR, 'locale.json');
 const SETTINGS_PATH = path.join(CURSOR_USER_DIR, 'settings.json');

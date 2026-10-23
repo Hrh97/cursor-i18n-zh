@@ -222,6 +222,9 @@ function applyTrickyReplacements(content) {
       zh: '提交聊天，Enter 插入换行，主要操作移至 ${',
     },
     { regex: /label:`Submit with \$\{/g, zh: 'label:`使用 ${' },
+    // Run Mode 模板字面量：`Run Mode (Enforced by ~/${...}/permissions.json)`
+    // 后半段是运行时路径插值，只替换前缀与括号，保留路径原样
+    { regex: /Run Mode \(Enforced by /g, zh: '运行模式（由 ' },
   ];
 
   let result = content;

@@ -18,7 +18,7 @@ const {
   PLATFORM,
 } = require('./src/platform');
 const { translateFile, fixMacGatekeeper } = require('./src/translate');
-const { configureLocale } = require('./src/locale');
+const { configureLocale, LOCALE_PATH } = require('./src/locale');
 
 const VERSION = '1.3.0';
 let customInstallPath = null;
@@ -117,14 +117,15 @@ function cmdStatus() {
     console.log(`    ${path.basename(t.rel)}: ${ok ? '✅ 有备份' : '— 无备份'} (${t.label})`);
   }
 
-  const localePath = path.join(require('os').homedir(), 'Library/Application Support/Cursor/User/locale.json');
-  if (fs.existsSync(localePath)) {
+  if (fs.existsSync(LOCALE_PATH)) {
     try {
-      const locale = JSON.parse(fs.readFileSync(localePath, 'utf8'));
+      const locale = JSON.parse(fs.readFileSync(LOCALE_PATH, 'utf8'));
       console.log(`\n  VS Code 语言: ${locale.locale || '未设置'}`);
     } catch {
       /* ignore */
     }
+  } else {
+    console.log('\n  VS Code 语言: 未配置（可运行 node index.js locale）');
   }
 
   console.log('');

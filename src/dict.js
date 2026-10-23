@@ -49,6 +49,9 @@ const safeGlobalDict = {
   'PR Link Destination': 'PR 链接打开方式',
   'Open pull request links inside Cursor or in the default browser.':
     '在 Cursor 内或默认浏览器中打开拉取请求链接。',
+  // 实际打包字面量（无句号、用 "the" 而非 "in the"），与上一条不同，需单独列出
+  'Open pull request links inside Cursor or the default browser':
+    '在 Cursor 内或默认浏览器中打开拉取请求链接',
   'Inside Cursor': '在 Cursor 内',
   'Warning Notifications': '警告通知',
   'Show warning-level in-app toasts.': '显示应用内警告级别提示。',
@@ -657,6 +660,14 @@ const riskyShortWords = {
 const { automationsDict } = require('./dict-automations');
 const { appearanceDict } = require('./dict-appearance');
 const { settingsPagesDict } = require('./dict-settings-pages');
-Object.assign(safeGlobalDict, automationsDict, appearanceDict, settingsPagesDict);
+const { dict326 } = require('./dict-326');
+const { dictBulk } = require('./dict-bulk');
+const { dict327 } = require('./dict-327');
+Object.assign(safeGlobalDict, automationsDict, appearanceDict, settingsPagesDict, dict326, dictBulk, dict327);
+
+// 功能位词条永久剔除清单：这些英文字符串在 Cursor 代码里参与运行逻辑
+// （比较/case 值/错误消息相等判断/常量赋值等），把它们替换成译文会破坏启动与行为，绝不翻译。
+// 清单由对 bundle 的静态扫描生成；Cursor 大版本更新后应重扫（scripts/scan-function-keys.js）。
+for (const k of require('./functional-keys.json')) delete safeGlobalDict[k];
 
 module.exports = { safeGlobalDict, riskyShortWords };

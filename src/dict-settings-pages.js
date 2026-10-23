@@ -91,6 +91,33 @@ const settingsPagesDict = {
   'Keep this computer awake': '保持电脑唤醒',
   'Prevent sleep when this computer is plugged in and Remote Control is enabled.':
     '启用远程控制且电脑接通电源时，防止进入睡眠。',
+  // 远程控制按钮 / 确认弹窗 / 状态文案（Cursor 3.25.x glass 包实测字面量）
+  'Enable Remote Control for this computer': '为本机启用远程控制',
+  'Disable Remote Control on all of my computers': '禁用我所有电脑上的远程控制',
+  'Disable Remote Control on all of your computers?': '禁用你所有电脑上的远程控制？',
+  'This will turn off Remote Control on every computer associated with your account.':
+    '这将关闭与您账号关联的每台电脑上的远程控制。',
+  'Turn Remote Control on again to reset this computer': '重新开启远程控制以重置本机',
+  'Turn on Remote Control or register this computer to keep it awake':
+    '开启远程控制或注册本机以保持唤醒',
+  'Wait for the worker to connect, or remove the Remote Control pill to send without converting.':
+    '等待工作进程连接，或移除远程控制标签以直接发送而不转换。',
+  'Saving Remote Control settings': '正在保存远程控制设置',
+  'Remote Control settings are unavailable': '远程控制设置不可用',
+  'Remote Control is running in another Cursor window':
+    '远程控制正在另一个 Cursor 窗口中运行',
+  'One of your organizations does not allow Remote Control':
+    '您的某个组织不允许使用远程控制',
+  'This computer cannot be registered while one of your organizations does not allow Remote Control':
+    '您的某个组织不允许使用远程控制，因此无法注册本机',
+  'This computer cannot be registered while Remote Control settings are unavailable':
+    '远程控制设置不可用时无法注册本机',
+  'This computer can be registered once Remote Control settings have loaded':
+    '远程控制设置加载完成后即可注册本机',
+  'A local agent joins a cloud Project by converting to Remote Control':
+    '本地智能体通过转换为远程控制来加入云端项目',
+  'Adding a local agent to a cloud project requires Remote Control':
+    '向云端项目添加本地智能体需要远程控制',
   Subagents: '子智能体',
   'Explore subagent model': 'Explore 子智能体模型',
   'The Explore subagent is used to do initial research for the main agent.':

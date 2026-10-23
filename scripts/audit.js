@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 /**
  * 汉化覆盖率自检脚本
- * 用法: node scripts/audit.js
+ * 用法: node scripts/audit.js [-p <Cursor 安装目录>]
+ *
+ * 注意：Windows 上 Cursor 若不在 C 盘（%LOCALAPPDATA% 之外），
+ * 默认候选路径找不到安装目录，必须用 -p / --path 指定。
  */
 const fs = require('fs');
 const path = require('path');
@@ -46,6 +49,8 @@ const PRIORITY_STRINGS = [
   ['Claim handle', 'Profile → 认领用户名'],
   // ② 外观补全
   ['Reduce Motion', 'Appearance → 减少动效'],
+  ['Your system has Reduce Transparency turned on right now', 'Appearance → 系统降低透明度提示'],
+  ['Unavailable while Reduce Motion is on', 'Appearance → 减少动效不可用提示'],
   ['Hide Email Address', 'Appearance → 隐藏邮箱'],
   // ③ 套餐与用量
   ['Current Plan</div>', 'Plan → 当前套餐'],
@@ -55,7 +60,7 @@ const PRIORITY_STRINGS = [
   ['Auto + Composer', 'Plan → Auto+Composer'],
   // ④ 智能体补全
   ['Code Block Word Wrap', 'Agents → 代码块换行'],
-  ['Remote Control', 'Agents → 远程控制'],
+  ['"Enable Remote Control for this computer"', 'Agents → 远程控制按钮'],
   ['Run Mode', 'Agents → 运行模式'],
   // ⑤ 工作树
   ['Max worktrees', 'Worktree → 最大工作树数'],
@@ -124,10 +129,21 @@ function auditFile(label, filePath) {
   return { missing, total: PRIORITY_STRINGS.length };
 }
 
+function parseCustomPath(argv) {
+  const i = argv.findIndex((a) => a === '-p' || a === '--path');
+  if (i === -1) return null;
+  const value = argv[i + 1];
+  if (!value || value.startsWith('-')) {
+    console.error('❌ 请在使用 -p / --path 后提供 Cursor 安装目录。');
+    process.exit(1);
+  }
+  return value;
+}
+
 function main() {
-  const paths = detectCursorPath();
+  const paths = detectCursorPath(parseCustomPath(process.argv.slice(2)));
   if (!paths) {
-    console.error('未找到 Cursor 安装目录');
+    console.error('❌ 未找到 Cursor 安装目录，请用 -p <Cursor 安装目录> 指定。');
     process.exit(1);
   }
 

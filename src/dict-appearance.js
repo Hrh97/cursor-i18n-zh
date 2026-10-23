@@ -69,6 +69,11 @@ const appearanceDict = {
     '启用后，半透明表面和毛玻璃效果将被不透明背景替代，以提高可读性。',
   'Use stronger derived contrast colors': '使用更强的衍生对比色',
   'Use themed background colors for inline diffs': '为内联差异使用主题背景色',
+  // 系统/条件文案（打包中为完整静态整句，含引号）
+  'Your system has Reduce Transparency turned on right now':
+    '您的系统当前已开启「降低透明度」',
+  'Unavailable while Reduce Motion is on (from settings or your system)':
+    '「减少动效」开启时不可用（来自设置或系统）',
 
   // ── Typography ──
   Typography: '字体排版',

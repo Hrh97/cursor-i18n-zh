@@ -46,7 +46,9 @@ node index.js localize
 | `node index.js restore` | 恢复英文原版 |
 | `node index.js status` | 查看汉化状态与 Cursor 版本 |
 | `node index.js locale` | 仅配置 VS Code 中文语言包 |
-| `node index.js audit` | 自检优先词条覆盖率 |
+| `npm run audit` | 自检优先词条覆盖率（固定 171 条清单，防回归） |
+| `npm run probe` | 反向探测遗漏：动态挖出 bundle 里未被命中的英文文案 |
+| `npm run fkeys` | 扫描「绝不能翻译」的功能位字符串（防启动卡死） |
 | `node index.js help` | 显示帮助 |
 
 也可使用 npm scripts：
@@ -56,7 +58,55 @@ npm run localize
 npm run restore
 npm run status
 npm run audit
+npm run probe
+npm run fkeys
 ```
+
+### 为什么有些英文故意不翻译：`src/functional-keys.json`
+
+Cursor 的 bundle 里有相当一部分英文字符串**不用于显示**，而是参与运行逻辑。把它们翻成
+中文会让程序按中文去查英文表，直接崩在启动阶段（3.27.6 就发生过：启动后进程挂着、
+永远不出窗口）。
+
+两类高危字符串：
+
+1. **比较/分支用**：`case "X"`、`x === "X"`、`list.includes("X")`、`.name === "X"` 等；
+2. **名字构件表**：如主题语义 token 的图像素表
+   `{red:"Red", added:"Added", modified:"Modified", removed:"Removed", ...}`，
+   这些值会被拼进 token 名（`bg` + `Git` + `Added` + `PrimaryHover` = `bgGitAddedPrimaryHover`）。
+   一旦 `"Added"` 变成 `"已添加"`，运行时拼出 `bgGit已添加PrimaryHover`，
+   按英文名查表查不到 → 抛 `cursor semantic: missing ref` → workbench 引导中断。
+
+因此 `src/dict.js` 在合并完所有词典后会执行：
+
+```js
+for (const k of require('./functional-keys.json')) delete safeGlobalDict[k];
+```
+
+清单由 `npm run fkeys` 扫描原版备份生成（默认只预览，加 `--write` 才写入）。
+
+> ⚠️ **Cursor 大版本更新后**：先 `npm run fkeys` 看清单是否有新增，写入后必须验证
+> ① 能正常启动出窗口 ② `npm run audit` 遗漏为 0。
+
+
+### `npm run probe` 反向探测
+
+`audit.js` 只查一份固定清单，发现不了 Cursor 新版本带来的全新文案；`probe.js` 反过来从产物里挖：
+
+1. 抓出三个 bundle 的全部字符串字面量；
+2. 跑一遍 `translateContent()` 得到「模拟汉化结果」；
+3. 用集合差集判断哪些英文原样存活 = 字典里没有 = 遗漏。
+
+因此未汉化状态也能直接跑，不需要先 localize。
+
+```bash
+npm run probe                # A 级：UI 属性位 / JSX 文本位，误报极少
+npm run probe -- --deep      # 附加 B 级：句法像文案，需人工甄别
+npm run probe -- --new-only  # 剔除字典已有键，只报真正要新增的词条
+npm run probe -- --json      # 输出 JSON 清单，便于批量处理
+```
+
+Cursor 每次自动更新后，先 `npm run probe -- --new-only` 看有没有新文案，补进 `src/dict-*.js` 再 `npm run localize`。
 
 ## 工作原理
 
@@ -103,7 +153,8 @@ cursor-i18n-zh/
 ├── index.js                 # CLI 入口
 ├── package.json
 ├── scripts/
-│   └── audit.js             # 覆盖率自检
+│   ├── audit.js             # 覆盖率自检（固定清单，防回归）
+│   └── probe.js             # 反向探测遗漏（动态扫描，发现新文案）
 └── src/
     ├── platform.js          # 路径检测、提权、运行状态
     ├── backup.js            # 外部目录备份/还原
@@ -113,6 +164,7 @@ cursor-i18n-zh/
     ├── tricky.js            # 特殊格式正则替换
     ├── settings-nav.js      # Settings 侧栏导航映射
     ├── dict.js              # 主翻译字典
+    ├── dict-326.js          # Cursor 3.26.x 新增词条字典
     ├── dict-automations.js  # Automations 专用字典
     ├── dict-appearance.js   # Appearance 专用字典
     └── dict-settings-pages.js # Settings 七大页面补全字典
@@ -176,6 +228,14 @@ npm run audit   # 优先词条 0 遗漏
 ```bash
 node index.js localize
 ```
+
+如果更新后仍有个别新界面是英文（新版本带来了全新文案），用反向探测把它们找出来：
+
+```bash
+npm run probe -- --new-only   # 列出字典里还没有的新文案
+```
+
+把结果补进 `src/dict-*.js`，再跑一次 `localize` 即可。
 
 ### 权限不足 / EPERM？
 

@@ -11,6 +11,9 @@ const automationsDict = {
   'Failed \xB7 7d': '失败 · 7天',
   'Run History': '运行历史',
   'New Automation': '新建自动化',
+  // Automations 页副标题（打包中的完整整句，含 ASCII 撇号）
+  "Automate repetitive tasks with always-on agents and configure Cursor's built-in agents for your team.":
+    '使用始终在线的智能体自动执行重复性任务，并为你的团队配置 Cursor 内置智能体。',
   'Edit Automation': '编辑自动化',
   'Delete automation': '删除自动化',
   'All Automations': '全部自动化',

@@ -74,10 +74,10 @@ function detectCursorPath(customPath) {
 
 function getDefaultCursorCandidates() {
   if (PLATFORM === 'win32') {
-    return [
-      path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local'), 'Programs', 'cursor', 'resources', 'app'),
-      path.join(process.env.ProgramFiles || 'C:\\Program Files', 'cursor', 'resources', 'app'),
-    ];
+    // 注册表是唯一能覆盖「装在非系统盘」的来源：默认的 %LOCALAPPDATA%
+    // 与实际安装盘无关，装在 D: 等盘时按环境变量推断必然失败。
+    // HKCU 卸载项无需管理员权限即可读取。
+    return [...readRegistryCandidates(), ...getWindowsFallbackCandidates()];
   }
   if (PLATFORM === 'darwin') {
     return [
@@ -88,6 +88,59 @@ function getDefaultCursorCandidates() {
   return [
     '/opt/Cursor/resources/app',
     path.join(os.homedir(), '.local/share/cursor/resources/app'),
+  ];
+}
+
+/**
+ * 从 Windows 注册表卸载项中读取 Cursor 的真实安装位置。
+ * 同时覆盖用户级(HKCU)与机器级(HKLM)安装，失败时静默返回空数组。
+ */
+function readRegistryCandidates() {
+  const uninstallRoots = [
+    'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall',
+    'HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall',
+    'HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall',
+  ];
+  const out = [];
+
+  for (const root of uninstallRoots) {
+    let listing;
+    try {
+      listing = execSync(`reg query "${root}" /s /f Cursor /d`, {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+        windowsHide: true,
+      });
+    } catch {
+      continue; // 键不存在或无权限
+    }
+
+    // 输出形如:  InstallLocation    REG_SZ    D:\...\cursor\
+    const re = /^\s*InstallLocation\s+REG_SZ\s+(.+?)\s*$/gim;
+    let m;
+    while ((m = re.exec(listing)) !== null) {
+      const loc = m[1].trim();
+      if (!loc) continue;
+      const appPath = resolveAppPath(loc);
+      if (appPath && !out.includes(appPath)) out.push(appPath);
+    }
+  }
+
+  return out;
+}
+
+/** 环境变量推断出的候选路径（跨盘安装时会失效，仅作回退） */
+function getWindowsFallbackCandidates() {
+  const localAppData =
+    process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local');
+  const programFiles = process.env.ProgramFiles || 'C:\\Program Files';
+  const programFilesX86 =
+    process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)';
+
+  return [
+    path.join(localAppData, 'Programs', 'cursor', 'resources', 'app'),
+    path.join(programFiles, 'cursor', 'resources', 'app'),
+    path.join(programFilesX86, 'cursor', 'resources', 'app'),
   ];
 }
 
