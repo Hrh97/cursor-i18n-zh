@@ -18,6 +18,8 @@ const {
   PLATFORM,
 } = require('./src/platform');
 const { translateFile, fixMacGatekeeper } = require('./src/translate');
+const { patchGlassUi, listGlassUiFiles } = require('./src/glass-ui');
+const { patchNlsMessages, nlsPath } = require('./src/nls-msg');
 const { configureLocale, LOCALE_PATH } = require('./src/locale');
 
 const VERSION = '1.3.0';
@@ -148,7 +150,8 @@ function cmdLocalize() {
 
   const paths = getPaths();
   const version = readCursorVersion(paths.appPath);
-  const writableFiles = [paths.productJsonPath, ...paths.targets.map((t) => t.abs)];
+  const glassUiFiles = listGlassUiFiles(paths.appPath);
+  const writableFiles = [paths.productJsonPath, ...paths.targets.map((t) => t.abs), ...glassUiFiles, nlsPath(paths.appPath)];
 
   console.log('\n🚀 Cursor 界面汉化');
   console.log(`   版本: ${version}`);
@@ -196,6 +199,37 @@ function cmdLocalize() {
     }
   }
 
+  // 3b. Glass 渲染层（顶部应用菜单 / 右键菜单）——硬编码在 molten/dist/renderer 里
+  console.log('\n🍸 步骤 3b: 汉化 Glass 菜单标签');
+  try {
+    const r = patchGlassUi(paths.appPath);
+    if (r.total > 0) {
+      console.log(`  ✅ 共替换 ${r.total} 处，涉及 ${r.changed.length}/${r.files} 个渲染层文件`);
+    } else {
+      console.log('  ℹ️ 无需替换（已汉化或未匹配）');
+    }
+  } catch (e) {
+    console.warn(`  ⚠️ Glass 菜单汉化跳过: ${e.message}`);
+  }
+
+  // 3c. 核心 NLS 文案表（out/nls.messages.json）—— 顶部菜单项等走 NLS 索引的文案
+  console.log('\n🗂️ 步骤 3c: 汉化核心 NLS 文案表');
+  try {
+    const { safeGlobalDict, riskyShortWords } = require('./src/dict');
+    const dict = Object.assign({}, safeGlobalDict);
+    for (const [k, v] of Object.entries(riskyShortWords)) {
+      if (dict[k] === undefined) dict[k] = v;
+    }
+    const nls = patchNlsMessages(paths.appPath, dict);
+    if (nls.missing) {
+      console.log('  ℹ️ 未找到 out/nls.messages.json，跳过');
+    } else {
+      console.log(`  ✅ 命中 ${nls.changed} 条 / 共 ${nls.total} 条（唯一词条 ${nls.unique}）`);
+    }
+  } catch (e) {
+    console.warn(`  ⚠️ NLS 文案表汉化跳过: ${e.message}`);
+  }
+
   // 4. Hash + 签名
   console.log('\n🛠️ 步骤 4/4: 修复完整性校验');
   try {
@@ -229,7 +263,8 @@ function cmdRestore() {
 
   const paths = getPaths();
   const version = readCursorVersion(paths.appPath);
-  const writableFiles = [paths.productJsonPath, ...paths.targets.map((t) => t.abs)];
+  const glassUiFiles = listGlassUiFiles(paths.appPath);
+  const writableFiles = [paths.productJsonPath, ...paths.targets.map((t) => t.abs), ...glassUiFiles, nlsPath(paths.appPath)];
 
   prepareAppForWrite(paths.appBundlePath, writableFiles);
 

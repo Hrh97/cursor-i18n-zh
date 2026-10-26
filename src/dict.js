@@ -655,6 +655,15 @@ const riskyShortWords = {
   Indexing: '索引',
   Privacy: '隐私',
   Notifications: '通知',
+  // 任务状态标签：同时被当枚举值用（e.DONE="Done"、e[e.Canceled=1]="Canceled"），
+  // 只能放在这里（仅 UI 属性位替换），绝不能进 safeGlobalDict
+  Done: '完成',
+  Canceled: '已取消',
+  // 顶部应用菜单单字项：bundle 里出现频率高（View 124 处），只能限定 UI 属性位替换
+  View: '视图',
+  Exit: '退出',
+  Quit: '退出',
+  Forward: '前进',
 };
 
 const { automationsDict } = require('./dict-automations');
@@ -663,7 +672,11 @@ const { settingsPagesDict } = require('./dict-settings-pages');
 const { dict326 } = require('./dict-326');
 const { dictBulk } = require('./dict-bulk');
 const { dict327 } = require('./dict-327');
-Object.assign(safeGlobalDict, automationsDict, appearanceDict, settingsPagesDict, dict326, dictBulk, dict327);
+const { dict32714 } = require('./dict-32714');
+const { dictMenus } = require('./dict-menus');
+const { dictAppMenu } = require('./dict-appmenu');
+const { editMenuDict } = require('./dict-editmenu');
+Object.assign(safeGlobalDict, automationsDict, appearanceDict, settingsPagesDict, dict326, dictBulk, dict327, dict32714, dictMenus, dictAppMenu, editMenuDict);
 
 // 功能位词条永久剔除清单：这些英文字符串在 Cursor 代码里参与运行逻辑
 // （比较/case 值/错误消息相等判断/常量赋值等），把它们替换成译文会破坏启动与行为，绝不翻译。

@@ -225,6 +225,11 @@ function applyTrickyReplacements(content) {
     // Run Mode 模板字面量：`Run Mode (Enforced by ~/${...}/permissions.json)`
     // 后半段是运行时路径插值，只替换前缀与括号，保留路径原样
     { regex: /Run Mode \(Enforced by /g, zh: '运行模式（由 ' },
+    // 三元表达式里的按钮文案：children: x ? "Done" : "Edit"
+    // 这类写法不落在 label:/title: 属性位，riskyShortWords 覆盖不到，单列规则。
+    // 只收「确认是 UI 文案」的组合，避免误伤 true/false、on/off 这类枚举。
+    { regex: /\?"Done":"Edit"/g, zh: '?"完成":"编辑"' },
+    { regex: /\?"Edit":"Done"/g, zh: '?"编辑":"完成"' },
   ];
 
   let result = content;
