@@ -664,6 +664,10 @@ const riskyShortWords = {
   Exit: '退出',
   Quit: '退出',
   Forward: '前进',
+  // 发布按钮文案：同字面量也是 app-publish 常量（UGo="Publish App"），只能限定 UI 属性位
+  'Publish App': '发布应用',
+  Republish: '重新发布',
+  Published: '已发布',
 };
 
 const { automationsDict } = require('./dict-automations');
@@ -676,7 +680,8 @@ const { dict32714 } = require('./dict-32714');
 const { dictMenus } = require('./dict-menus');
 const { dictAppMenu } = require('./dict-appmenu');
 const { editMenuDict } = require('./dict-editmenu');
-Object.assign(safeGlobalDict, automationsDict, appearanceDict, settingsPagesDict, dict326, dictBulk, dict327, dict32714, dictMenus, dictAppMenu, editMenuDict);
+const { dict32722 } = require('./dict-32722');
+Object.assign(safeGlobalDict, automationsDict, appearanceDict, settingsPagesDict, dict326, dictBulk, dict327, dict32714, dictMenus, dictAppMenu, editMenuDict, dict32722);
 
 // 功能位词条永久剔除清单：这些英文字符串在 Cursor 代码里参与运行逻辑
 // （比较/case 值/错误消息相等判断/常量赋值等），把它们替换成译文会破坏启动与行为，绝不翻译。
